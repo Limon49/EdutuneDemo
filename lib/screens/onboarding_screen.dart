@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../utils/app_theme.dart';
 import '../utils/app_assets.dart';
+import '../routes/app_routes.dart';
 import '../widgets/common_widgets.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.pushReplacementNamed(context, '/welcome');
+      AppRoutes.navigateAndReplace(AppRoutes.welcome);
     }
   }
 
@@ -159,8 +160,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 12),
             TextButton(
-              onPressed: () =>
-                  Navigator.pushReplacementNamed(context, '/welcome'),
+              onPressed: () => AppRoutes.navigateAndReplace(AppRoutes.welcome),
               child: Text(
                 'Skip',
                 style: GoogleFonts.poppins(

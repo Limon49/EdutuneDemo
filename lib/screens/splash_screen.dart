@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/app_assets.dart';
+import '../routes/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/onboarding');
+        AppRoutes.navigateAndReplace(AppRoutes.onboarding);
       }
     });
   }

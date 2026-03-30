@@ -63,4 +63,25 @@ class AppRoutes {
     GetPage(name: nominee, page: () => const NomineeUpdateScreen()),
     GetPage(name: infoUpdate, page: () => const InformationUpdateScreen()),
   ];
+
+  // Navigation helpers
+  static void navigateTo(String route, {dynamic arguments}) {
+    Get.toNamed(route, arguments: arguments);
+  }
+
+  static void navigateAndReplace(String route) {
+    Get.offNamed(route);
+  }
+
+  static void navigateAndClearStack(String route) {
+    Get.offAllNamed(route);
+  }
+
+  static void pop() {
+    Get.back();
+  }
+
+  static void popToFirst() {
+    Get.until((route) => route.isFirst);
+  }
 }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/auth_controller.dart';
 import '../utils/app_theme.dart';
+import '../routes/app_routes.dart';
 import '../widgets/common_widgets.dart';
 
 // ─── Welcome Screen ──────────────────────────────────────────────────────────
@@ -24,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
                     icon: const Icon(Icons.arrow_back,
                         color: AppColors.textPrimary),
                     onPressed: () =>
-                        Navigator.pushReplacementNamed(context, '/onboarding'),
+                        AppRoutes.navigateAndReplace(AppRoutes.onboarding),
                   ),
                   const Spacer(),
                   const LanguageBadge(),
@@ -52,12 +53,12 @@ class WelcomeScreen extends StatelessWidget {
               ),
               PrimaryButton(
                 text: 'Sign Up',
-                onPressed: () => Navigator.pushNamed(context, '/signup'),
+                onPressed: () => AppRoutes.navigateTo(AppRoutes.signup),
               ),
               const SizedBox(height: 12),
               SecondaryButton(
                 text: 'Log In',
-                onPressed: () => Navigator.pushNamed(context, '/login'),
+                onPressed: () => AppRoutes.navigateTo(AppRoutes.login),
               ),
               const SizedBox(height: 16),
               const BottomIssueBar(),
@@ -177,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Handle navigation and errors in builder
         if (controller.state is AuthAuthenticated) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, '/home');
+            AppRoutes.navigateAndClearStack(AppRoutes.home);
           });
         } else if (controller.state is AuthError) {
           final errorState = controller.state as AuthError;
@@ -282,7 +283,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           GestureDetector(
                             onTap: () =>
-                                Navigator.pushNamed(context, '/signup'),
+                                AppRoutes.navigateTo(AppRoutes.signup),
                             child: Text(
                               'Sign Up',
                               style: GoogleFonts.poppins(
@@ -336,8 +337,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         // Handle OTP navigation
         if (controller.state is AuthOtpSent) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushNamed(context, '/otp',
-                arguments: {'phone': (controller.state as AuthOtpSent).phone});
+            AppRoutes.navigateTo(AppRoutes.otp, arguments: {'phone': (controller.state as AuthOtpSent).phone});
           });
         }
         final isLoading = controller.state is AuthLoading;
@@ -467,7 +467,7 @@ class _OtpScreenState extends State<OtpScreen> {
         // Handle authentication success
         if (controller.state is AuthAuthenticated) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, '/home');
+            AppRoutes.navigateAndClearStack(AppRoutes.home);
           });
         }
         final isLoading = controller.state is AuthLoading;
