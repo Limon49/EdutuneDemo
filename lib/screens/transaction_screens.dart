@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../bloc/transaction_bloc.dart';
+import '../controllers/transaction_controller.dart';
 import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
 
-// ─── Confirm Cash Out ─────────────────────────────────────────────────────────
 class ConfirmCashOutScreen extends StatefulWidget {
   const ConfirmCashOutScreen({super.key});
 
@@ -39,85 +38,86 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final agent = args?['agent'] ?? '01730805499';
 
-    return BlocListener<TransactionBloc, TransactionState>(
-      listener: (context, state) {
-        if (state is CashOutSuccess) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => SuccessDialog(
-              title: 'Cash Out Successful',
-              subtitle: 'Withdraw TK ${state.amount.toStringAsFixed(0)}',
-              illustration: _buildCashOutIllustration(),
-              onBackToHome: () {
-                context.read<TransactionBloc>().add(ResetTransaction());
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/home', (r) => false);
-              },
-            ),
-          );
-        } else if (state is TransactionError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error),
-          );
+    return GetX<TransactionController>(
+      builder: (controller) {
+        // Handle success and error states
+        if (controller.state is CashOutSuccess) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => SuccessDialog(
+                title: 'Cash Out Successful',
+                subtitle: 'Withdraw TK ${(controller.state as CashOutSuccess).amount.toStringAsFixed(0)}',
+                illustration: _buildCashOutIllustration(),
+                onBackToHome: () {
+                  controller.add(ResetTransaction());
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/home', (r) => false);
+                },
+              ),
+            );
+          });
+        } else if (controller.state is TransactionError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text((controller.state as TransactionError).message),
+                  backgroundColor: AppColors.error),
+            );
+          });
         }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: RichText(
-            text: TextSpan(
-              style: GoogleFonts.poppins(fontSize: 16),
+      final isLoading = controller.state is TransactionLoading;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: RichText(
+              text: TextSpan(
+                style: GoogleFonts.poppins(fontSize: 16),
+                children: [
+                  const TextSpan(
+                      text: 'Confirm to ',
+                      style: TextStyle(color: AppColors.primary)),
+                  TextSpan(
+                      text: 'Cash Out',
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary)),
+                ],
+              ),
+            ),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TextSpan(
-                    text: 'Confirm to ',
-                    style: TextStyle(color: AppColors.primary)),
-                TextSpan(
-                    text: 'Cash Out',
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary)),
+                const SizedBox(height: 20),
+                _buildInfoRow('Agent', agent),
+                const Divider(height: 32),
+                _buildAmountSection(),
+                const Spacer(),
+                PrimaryButton(
+                  text: 'Confirm',
+                  isEnabled: _amount > 0,
+                  isLoading: isLoading,
+                  onPressed: _amount > 0
+                      ? () => controller.add(
+                            CashOutRequested(agentNumber: agent, amount: _amount),
+                          )
+                      : null,
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        body: BlocBuilder<TransactionBloc, TransactionState>(
-          builder: (context, state) {
-            final isLoading = state is TransactionLoading;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  _buildInfoRow('Agent', agent),
-                  const Divider(height: 32),
-                  _buildAmountSection(),
-                  const Spacer(),
-                  PrimaryButton(
-                    text: 'Confirm',
-                    isEnabled: _amount > 0,
-                    isLoading: isLoading,
-                    onPressed: _amount > 0
-                        ? () => context.read<TransactionBloc>().add(
-                              CashOutRequested(agentNumber: agent, amount: _amount),
-                            )
-                        : null,
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -373,94 +373,96 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final contact = args?['contact'] ?? '01730805499';
 
-    return BlocListener<TransactionBloc, TransactionState>(
-      listener: (context, state) {
-        if (state is SendMoneySuccess) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => SuccessDialog(
-              title: 'Send Money Successful',
-              subtitle: 'Send TK ${state.amount.toStringAsFixed(0)}',
-              illustration: _buildSendIllustration(),
-              onBackToHome: () {
-                context.read<TransactionBloc>().add(ResetTransaction());
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/home', (r) => false);
-              },
-            ),
-          );
-        } else if (state is TransactionError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error),
-          );
+    return GetX<TransactionController>(
+      builder: (controller) {
+        // Handle success and error states
+        if (controller.state is SendMoneySuccess) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => SuccessDialog(
+                title: 'Send Money Successful',
+                subtitle: 'Send TK ${(controller.state as SendMoneySuccess).amount.toStringAsFixed(0)}',
+                illustration: _buildSendIllustration(),
+                onBackToHome: () {
+                  controller.add(ResetTransaction());
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/home', (r) => false);
+                },
+              ),
+            );
+          });
+        } else if (controller.state is TransactionError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text((controller.state as TransactionError).message),
+                  backgroundColor: AppColors.error),
+            );
+          });
         }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: RichText(
-            text: TextSpan(
-              style: GoogleFonts.poppins(fontSize: 16),
-              children: [
-                const TextSpan(
-                    text: 'Confirm to ',
-                    style: TextStyle(color: AppColors.primary)),
-                TextSpan(
-                    text: 'Send Money',
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary)),
-              ],
+      final isLoading = controller.state is TransactionLoading;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: RichText(
+              text: TextSpan(
+                style: GoogleFonts.poppins(fontSize: 16),
+                children: [
+                  const TextSpan(
+                      text: 'Confirm to ',
+                      style: TextStyle(color: AppColors.primary)),
+                  TextSpan(
+                      text: 'Send Money',
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary)),
+                ],
+              ),
+            ),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.pop(context),
             ),
           ),
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        body: BlocBuilder<TransactionBloc, TransactionState>(
-          builder: (context, state) {
-            final isLoading = state is TransactionLoading;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text('Contact Number',
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w600, fontSize: 14)),
-                  const SizedBox(height: 8),
-                  Text(contact,
-                      style: GoogleFonts.poppins(
-                          fontSize: 15, color: AppColors.textSecondary)),
-                  const Divider(height: 32),
-                  Text('Amount',
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w600, fontSize: 14)),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: TextField(
-                      controller: _amountController,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                Text('Contact Number',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 8),
+                Text(contact,
+                    style: GoogleFonts.poppins(
+                        fontSize: 15, color: AppColors.textSecondary)),
+                const Divider(height: 32),
+                Text('Amount',
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600, fontSize: 14)),
+                const SizedBox(height: 16),
+                Center(
+                  child: TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: _amount > 0
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Tk: 0',
+                      hintStyle: GoogleFonts.poppins(
                         fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: _amount > 0
-                            ? AppColors.textPrimary
-                            : AppColors.textSecondary,
+                        color: AppColors.textSecondary.withOpacity(0.5),
                       ),
-                      decoration: InputDecoration(
-                        hintText: 'Tk: 0',
-                        hintStyle: GoogleFonts.poppins(
-                          fontSize: 32,
-                          color: AppColors.textSecondary.withOpacity(0.5),
-                        ),
                         border: InputBorder.none,
                         prefixText: _amount > 0 ? 'TK: ' : '',
                         prefixStyle: GoogleFonts.poppins(
@@ -499,7 +501,7 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
                     isEnabled: _amount > 0,
                     isLoading: isLoading,
                     onPressed: _amount > 0
-                        ? () => context.read<TransactionBloc>().add(
+                        ? () => controller.add(
                               SendMoneyRequested(
                                   contactNumber: contact, amount: _amount),
                             )
@@ -508,10 +510,9 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
                   const SizedBox(height: 20),
                 ],
               ),
-            );
-          },
-        ),
-      ),
+            ),
+        );
+      },
     );
   }
 

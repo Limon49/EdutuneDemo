@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'bloc/auth_bloc.dart';
-import 'bloc/transaction_bloc.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'controllers/auth_controller.dart';
+import 'controllers/transaction_controller.dart';
 import 'screens/splash_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/auth_screens.dart';
@@ -18,8 +19,10 @@ import 'screens/settings_extras_screens.dart';
 import 'screens/nominee_info_screens.dart';
 import 'utils/app_theme.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await GetStorage.init();
+  initializeControllers(); // Initialize GetX controllers
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -30,47 +33,46 @@ void main() {
   runApp(const EPayApp());
 }
 
+void initializeControllers() {
+  Get.put(AuthController());
+  Get.put(TransactionController());
+}
+
 class EPayApp extends StatelessWidget {
   const EPayApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(create: (_) => AuthBloc()),
-        BlocProvider<TransactionBloc>(create: (_) => TransactionBloc()),
+    return GetMaterialApp(
+      title: 'ePay',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.theme,
+      initialRoute: '/',
+      getPages: [
+        GetPage(name: '/', page: () => const SplashScreen()),
+        GetPage(name: '/onboarding', page: () => const OnboardingScreen()),
+        GetPage(name: '/welcome', page: () => const WelcomeScreen()),
+        GetPage(name: '/login', page: () => const LoginScreen()),
+        GetPage(name: '/signup', page: () => const SignUpScreen()),
+        GetPage(name: '/otp', page: () => const OtpScreen()),
+        GetPage(name: '/home', page: () => const HomeScreen()),
+        GetPage(name: '/cashout', page: () => const CashOutScreen()),
+        GetPage(name: '/addmoney', page: () => const AddMoneyScreen()),
+        GetPage(name: '/sendmoney', page: () => const SendMoneyScreen()),
+        GetPage(name: '/confirm-cashout', page: () => const ConfirmCashOutScreen()),
+        GetPage(name: '/confirm-sendmoney', page: () => const ConfirmSendMoneyScreen()),
+        GetPage(name: '/profile', page: () => const ProfileScreen()),
+        GetPage(name: '/statements', page: () => const StatementsScreen()),
+        GetPage(name: '/paybill', page: () => const PayBillScreen()),
+        GetPage(name: '/bill-payment', page: () => const BillPaymentScreen()),
+        GetPage(name: '/mobile-recharge', page: () => const MobileRechargeScreen()),
+        GetPage(name: '/settings', page: () => const SettingsScreen()),
+        GetPage(name: '/points', page: () => const PointsScreen()),
+        GetPage(name: '/limits', page: () => const LimitsScreen()),
+        GetPage(name: '/coupons', page: () => const CouponsScreen()),
+        GetPage(name: '/nominee', page: () => const NomineeUpdateScreen()),
+        GetPage(name: '/info-update', page: () => const InformationUpdateScreen()),
       ],
-      child: MaterialApp(
-        title: 'ePay',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,
-        initialRoute: '/',
-        routes: {
-          '/': (_) => const SplashScreen(),
-          '/onboarding': (_) => const OnboardingScreen(),
-          '/welcome': (_) => const WelcomeScreen(),
-          '/login': (_) => const LoginScreen(),
-          '/signup': (_) => const SignUpScreen(),
-          '/otp': (_) => const OtpScreen(),
-          '/home': (_) => const HomeScreen(),
-          '/cashout': (_) => const CashOutScreen(),
-          '/addmoney': (_) => const AddMoneyScreen(),
-          '/sendmoney': (_) => const SendMoneyScreen(),
-          '/confirm-cashout': (_) => const ConfirmCashOutScreen(),
-          '/confirm-sendmoney': (_) => const ConfirmSendMoneyScreen(),
-          '/profile': (_) => const ProfileScreen(),
-          '/statements': (_) => const StatementsScreen(),
-          '/paybill': (_) => const PayBillScreen(),
-          '/bill-payment': (_) => const BillPaymentScreen(),
-          '/mobile-recharge': (_) => const MobileRechargeScreen(),
-          '/settings': (_) => const SettingsScreen(),
-          '/points': (_) => const PointsScreen(),
-          '/limits': (_) => const LimitsScreen(),
-          '/coupons': (_) => const CouponsScreen(),
-          '/nominee': (_) => const NomineeUpdateScreen(),
-          '/info-update': (_) => const InformationUpdateScreen(),
-        },
-      ),
     );
   }
 }

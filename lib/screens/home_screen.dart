@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../bloc/auth_bloc.dart';
+import '../controllers/auth_controller.dart';
 import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
 
@@ -131,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.pop(context);
                       if (item['label'] == 'Logout') {
-                        context.read<AuthBloc>().add(LogoutRequested());
+                        Get.find<AuthController>().add(LogoutRequested());
                         Navigator.pushReplacementNamed(context, '/welcome');
                       } else if (item['label'] == 'Home') {
                         // already on home

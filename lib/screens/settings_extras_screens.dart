@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../bloc/auth_bloc.dart';
+import '../controllers/auth_controller.dart';
 import '../utils/app_theme.dart';
 
 // ─── Settings Screen ──────────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               iconColor: AppColors.error,
               labelColor: AppColors.error,
               onTap: () {
-                context.read<AuthBloc>().add(LogoutRequested());
+                Get.find<AuthController>().add(LogoutRequested());
                 Navigator.pushReplacementNamed(context, '/welcome');
               },
             ),

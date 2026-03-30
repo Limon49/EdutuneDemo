@@ -1,5 +1,45 @@
 import 'package:flutter/material.dart';
 
+class Transaction {
+  final String id;
+  final String type;
+  final double amount;
+  final String receiver;
+  final DateTime timestamp;
+  final double balance;
+
+  Transaction({
+    required this.id,
+    required this.type,
+    required this.amount,
+    required this.receiver,
+    required this.timestamp,
+    required this.balance,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type,
+      'amount': amount,
+      'receiver': receiver,
+      'timestamp': timestamp.toIso8601String(),
+      'balance': balance,
+    };
+  }
+
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      id: json['id'],
+      type: json['type'],
+      amount: json['amount'].toDouble(),
+      receiver: json['receiver'],
+      timestamp: DateTime.parse(json['timestamp']),
+      balance: json['balance'].toDouble(),
+    );
+  }
+}
+
 class UserModel {
   final String name;
   final String phoneNumber;

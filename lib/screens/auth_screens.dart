@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../bloc/auth_bloc.dart';
+import '../controllers/auth_controller.dart';
 import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
 
@@ -172,135 +172,137 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthAuthenticated) {
-          Navigator.pushReplacementNamed(context, '/home');
-        } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-            ),
-          );
+    return GetX<AuthController>(
+      builder: (controller) {
+        // Handle navigation and errors in builder
+        if (controller.state is AuthAuthenticated) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacementNamed(context, '/home');
+          });
+        } else if (controller.state is AuthError) {
+          final errorState = controller.state as AuthError;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(errorState.message),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          });
         }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              final isLoading = state is AuthLoading;
-              return SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          const Spacer(),
-                          const LanguageBadge(),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Log in Epay',
-                        style: GoogleFonts.poppins(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+            final isLoading = controller.state is AuthLoading;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: () => Navigator.pop(context),
                         ),
+                        const Spacer(),
+                        const LanguageBadge(),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Log in Epay',
+                      style: GoogleFonts.poppins(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
-                      const SizedBox(height: 28),
-                      InputField(
-                        label: 'Phone Number',
-                        hint: '01701*****4',
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                      ),
-                      const SizedBox(height: 20),
-                      InputField(
-                        label: 'Enter 6 Digit PIN',
-                        hint: '123456',
-                        isPassword: true,
-                        controller: _pinController,
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Forgot PIN ?',
-                            style: GoogleFonts.poppins(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    ),
+                    const SizedBox(height: 28),
+                    InputField(
+                      label: 'Phone Number',
+                      hint: '01701*****4',
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 20),
+                    InputField(
+                      label: 'Enter 6 Digit PIN',
+                      hint: '123456',
+                      isPassword: true,
+                      controller: _pinController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Forgot PIN ?',
+                          style: GoogleFonts.poppins(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      PrimaryButton(
-                        text: 'Log In',
-                        isLoading: isLoading,
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            context.read<AuthBloc>().add(LoginRequested(
-                                  phone: _phoneController.text,
-                                  pin: _pinController.text,
-                                ));
-                          }
-                        },
-                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    PrimaryButton(
+                      text: 'Log In',
+                      isLoading: isLoading,
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          controller.add(LoginRequested(
+                                phone: _phoneController.text,
+                                pin: _pinController.text,
+                              ));
+                        }
+                      },
+                    ),
                       const SizedBox(height: 32),
-                      Center(
-                        child: Icon(
-                          Icons.fingerprint,
-                          size: 60,
-                          color: AppColors.primary,
-                        ),
+                    Center(
+                      child: Icon(
+                        Icons.fingerprint,
+                        size: 60,
+                        color: AppColors.primary,
                       ),
-                      const SizedBox(height: 24),
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Don't have an account? ",
+                    ),
+                    const SizedBox(height: 24),
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account? ",
+                            style: GoogleFonts.poppins(
+                                color: AppColors.textSecondary),
+                          ),
+                          GestureDetector(
+                            onTap: () =>
+                                Navigator.pushNamed(context, '/signup'),
+                            child: Text(
+                              'Sign Up',
                               style: GoogleFonts.poppins(
-                                  color: AppColors.textSecondary),
-                            ),
-                            GestureDetector(
-                              onTap: () =>
-                                  Navigator.pushNamed(context, '/signup'),
-                              child: Text(
-                                'Sign Up',
-                                style: GoogleFonts.poppins(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 40),
-                      const BottomIssueBar(),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 40),
+                    const BottomIssueBar(),
+                  ],
                 ),
-              );
-            },
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -329,26 +331,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthOtpSent) {
-          Navigator.pushNamed(context, '/otp',
-              arguments: {'phone': state.phone});
+    return GetX<AuthController>(
+      builder: (controller) {
+        // Handle OTP navigation
+        if (controller.state is AuthOtpSent) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushNamed(context, '/otp',
+                arguments: {'phone': (controller.state as AuthOtpSent).phone});
+          });
         }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              final isLoading = state is AuthLoading;
-              return SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+        final isLoading = controller.state is AuthLoading;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                       Row(
                         children: [
                           IconButton(
@@ -396,7 +398,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         text: 'Sign Up',
                         isLoading: isLoading,
                         onPressed: () {
-                          context.read<AuthBloc>().add(SignUpRequested(
+                          controller.add(SignUpRequested(
                                 phone: _phoneController.text.isEmpty
                                     ? '+8801710234761'
                                     : _phoneController.text,
@@ -409,11 +411,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            ),
+        );
+      },
     );
   }
 }
@@ -461,23 +462,23 @@ class _OtpScreenState extends State<OtpScreen> {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final phone = args?['phone'] ?? '+8801710234761';
 
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state is AuthAuthenticated) {
-          Navigator.pushReplacementNamed(context, '/home');
+    return GetX<AuthController>(
+      builder: (controller) {
+        // Handle authentication success
+        if (controller.state is AuthAuthenticated) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.pushReplacementNamed(context, '/home');
+          });
         }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              final isLoading = state is AuthLoading;
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+        final isLoading = controller.state is AuthLoading;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                     Row(
                       children: [
                         IconButton(
@@ -547,18 +548,17 @@ class _OtpScreenState extends State<OtpScreen> {
                       isLoading: isLoading,
                       isEnabled: _isComplete,
                       onPressed: _isComplete
-                          ? () => context.read<AuthBloc>().add(OtpVerified())
+                          ? () => controller.add(OtpVerified())
                           : null,
                     ),
                     const SizedBox(height: 16),
                     const BottomIssueBar(),
                   ],
                 ),
-              );
-            },
-          ),
-        ),
-      ),
+              ),
+            ),
+        );
+      },
     );
   }
 }
