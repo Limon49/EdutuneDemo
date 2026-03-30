@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/auth_controller.dart';
 import '../utils/app_theme.dart';
+import '../utils/app_assets.dart';
 import '../routes/app_routes.dart';
 import '../widgets/common_widgets.dart';
 
-// ─── Welcome Screen ──────────────────────────────────────────────────────────
+//todo welcome screen
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
@@ -43,8 +44,8 @@ class WelcomeScreen extends StatelessWidget {
                       'Create Your Epay\nAccount',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -70,88 +71,27 @@ class WelcomeScreen extends StatelessWidget {
   }
 
   Widget _buildWelcomeIllustration() {
-    return SizedBox(
-      height: 220,
-      width: 220,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Background circle
-          Container(
-            width: 200,
-            height: 200,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.surface,
-            ),
-          ),
-          // Phone with person icon
-          Container(
-            width: 90,
-            height: 150,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border:
-                        Border.all(color: Colors.white.withOpacity(0.5), width: 2),
-                  ),
-                  child:
-                      const Icon(Icons.person, color: Colors.white, size: 24),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border:
-                        Border.all(color: Colors.white.withOpacity(0.5), width: 2),
-                  ),
-                  child: const Icon(Icons.work, color: Colors.white, size: 12),
-                ),
-              ],
-            ),
-          ),
-          // Colored dots
-          Positioned(
-              top: 30, left: 10,
-              child: _dot(Colors.teal, 14)),
-          Positioned(
-              top: 20, right: 30,
-              child: _dot(Colors.pink, 22)),
-          Positioned(
-              bottom: 40, left: 20,
-              child: _dot(AppColors.accent, 20)),
-          Positioned(
-              bottom: 50, right: 10,
-              child: _dot(Colors.blue, 14)),
-          Positioned(
-              top: 45, right: 5,
-              child: _dot(AppColors.primary, 10)),
-        ],
-      ),
-    );
-  }
-
-  Widget _dot(Color color, double size) {
     return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      width: 280,
+      height: 220,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Image.asset(
+          AppAssets.signup,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const SizedBox();
+          },
+        ),
+      ),
     );
   }
 }
 
-// ─── Login Screen ─────────────────────────────────────────────────────────────
+//todo login screen
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -175,7 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return GetX<AuthController>(
       builder: (controller) {
-        // Handle navigation and errors in builder
         if (controller.state is AuthAuthenticated) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             AppRoutes.navigateAndClearStack(AppRoutes.home);
@@ -236,7 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _pinController,
                       keyboardType: TextInputType.number,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 4),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: TextButton(
@@ -245,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           'Forgot PIN ?',
                           style: GoogleFonts.poppins(
                             color: AppColors.primary,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -265,10 +204,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                       const SizedBox(height: 32),
                     Center(
-                      child: Icon(
-                        Icons.fingerprint,
-                        size: 60,
-                        color: AppColors.primary,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: AppColors.primary.withOpacity(0.1),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: Image.asset(
+                            AppAssets.fingerprint,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.fingerprint,
+                                size: 40,
+                                color: AppColors.primary,
+                              );
+                            },
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -279,7 +237,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "Don't have an account? ",
                             style: GoogleFonts.poppins(
-                                color: AppColors.textSecondary),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                                color: AppColors.black400),
                           ),
                           GestureDetector(
                             onTap: () =>
@@ -288,6 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Sign Up',
                               style: GoogleFonts.poppins(
                                 color: AppColors.primary,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -295,7 +256,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 40),
+                     SizedBox(height: MediaQuery.of(context).size.height * 0.2,),
                     const BottomIssueBar(),
                   ],
                 ),
@@ -393,7 +354,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: _confirmPinController,
                         keyboardType: TextInputType.number,
                       ),
-                      const SizedBox(height: 32),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.1,),
                       PrimaryButton(
                         text: 'Sign Up',
                         isLoading: isLoading,
@@ -406,7 +367,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ));
                         },
                       ),
-                      const SizedBox(height: 40),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.2,),
                       const BottomIssueBar(),
                     ],
                   ),

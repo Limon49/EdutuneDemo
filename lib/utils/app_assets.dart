@@ -5,10 +5,11 @@ class AppAssets {
   static const String onboarding1 = 'assets/images/handshare.png';
   static const String onboarding2 = 'assets/images/handcard.png';
   static const String onboarding3 = 'assets/images/mobilesecurity.png';
+  static const String signup = 'assets/images/signup.png';
   static const String placeholder = 'assets/images/placeholder.png';
   
   // Icons
-  static const String home = 'assets/icons/home.svg';
+  static const String fingerprint = 'assets/icons/fingerprinticon.png';
   static const String wallet = 'assets/icons/wallet.svg';
   static const String send = 'assets/icons/send.svg';
   static const String receive = 'assets/icons/receive.svg';

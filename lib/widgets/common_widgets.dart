@@ -98,7 +98,7 @@ class SecondaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.confirmDisabled.withOpacity(0.5),
+          backgroundColor: AppColors.buttonGrey,
           foregroundColor: AppColors.primary,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -110,7 +110,7 @@ class SecondaryButton extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: AppColors.primary.withOpacity(0.6),
+            color: AppColors.primary,
           ),
         ),
       ),
@@ -268,8 +268,9 @@ class BottomIssueBar extends StatelessWidget {
           Text(
             AppStrings.didYouFaceIssue + ' ',
             style: GoogleFonts.poppins(
-              fontSize: 13,
-              color: AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.black.withOpacity(.6),
             ),
           ),
           GestureDetector(
@@ -277,7 +278,7 @@ class BottomIssueBar extends StatelessWidget {
             child: Text(
               AppStrings.contactUs,
               style: GoogleFonts.poppins(
-                fontSize: 13,
+                fontSize: 12,
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
               ),

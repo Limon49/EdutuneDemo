@@ -10,6 +10,7 @@ class AppColors {
   static const Color textPrimary = Color(0xFF1A1A2E);
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color textBlack = Color(0xFF101010);
+  static const Color black400 = Color(0xFF404040);
 
   static const Color error = Color(0xFFE53E3E);
   static const Color success = Color(0xFF38A169);
@@ -18,6 +19,7 @@ class AppColors {
   static const Color langBadge = Color(0xFFFFF0D4);
   static const Color confirmDisabled = Color(0xFFB0BEC5);
   static const Color inputBg = Color(0xFFEEF2F7);
+  static const Color buttonGrey = Color(0xFFB0C1D8);
 }
 
 class AppTheme {
