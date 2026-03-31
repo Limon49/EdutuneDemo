@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:flutter/material.dart';
 
-// Auth States (keeping same structure for UI compatibility)
 abstract class AuthState {
   bool get isLoading;
   bool get isAuthenticated;
@@ -68,7 +68,6 @@ class AuthUnauthenticated extends AuthState {
   String? get errorMessage => null;
 }
 
-// Auth Events (keeping same structure for UI compatibility)
 abstract class AuthEvent {
   const AuthEvent();
 }
@@ -93,23 +92,51 @@ class LogoutRequested extends AuthEvent {
   const LogoutRequested();
 }
 
-// Pure GetX AuthController
 class AuthController extends GetxController {
   final GetStorage _storage = GetStorage();
   
-  // Reactive state
   final authState = Rx<AuthState>(AuthInitial());
   
-  // Getters for current state
+  final loginPhoneController = TextEditingController();
+  final loginPinController = TextEditingController();
+  final signupPhoneController = TextEditingController();
+  final signupPinController = TextEditingController();
+  final signupConfirmPinController = TextEditingController();
+  final loginFormKey = GlobalKey<FormState>();
+  final signupFormKey = GlobalKey<FormState>();
+  
+  final otpControllers = List.generate(4, (_) => TextEditingController());
+  final otpFocusNodes = List.generate(4, (_) => FocusNode());
+  
   AuthState get state => authState.value;
   bool get isLoading => authState.value.isLoading;
   bool get isAuthenticated => authState.value.isAuthenticated;
   String? get errorMessage => authState.value.errorMessage;
   
+  bool get isOtpComplete => otpControllers.every((c) => c.text.isNotEmpty);
+  
   @override
   void onInit() {
     super.onInit();
     _checkAuthStatus();
+  }
+  
+  @override
+  void onClose() {
+    // Dispose controllers
+    loginPhoneController.dispose();
+    loginPinController.dispose();
+    signupPhoneController.dispose();
+    signupPinController.dispose();
+    signupConfirmPinController.dispose();
+    
+    for (var c in otpControllers) {
+      c.dispose();
+    }
+    for (var f in otpFocusNodes) {
+      f.dispose();
+    }
+    super.onClose();
   }
   
   void _checkAuthStatus() {
@@ -119,7 +146,6 @@ class AuthController extends GetxController {
     }
   }
   
-  // BLoC-like add method for UI compatibility
   void add(AuthEvent event) {
     if (event is LoginRequested) {
       _onLoginRequested(event);
@@ -187,8 +213,46 @@ class AuthController extends GetxController {
     Get.offAllNamed('/welcome');
   }
   
+  // OTP handling
+  void onOtpDigitEntered(int index, String value) {
+    if (value.isNotEmpty && index < 3) {
+      otpFocusNodes[index + 1].requestFocus();
+    }
+    if (value.isEmpty && index > 0) {
+      otpFocusNodes[index - 1].requestFocus();
+    }
+    update(); // Trigger UI update
+  }
+  
   // Convenience methods
   String? getUserPhone() {
     return _storage.read('user_phone');
+  }
+  
+  // Login method
+  void login() {
+    if (loginFormKey.currentState!.validate()) {
+      add(LoginRequested(
+        phone: loginPhoneController.text,
+        pin: loginPinController.text,
+      ));
+    }
+  }
+  
+  // Signup method
+  void signup() {
+    add(SignUpRequested(
+      phone: signupPhoneController.text.isEmpty
+          ? '+8801710234761'
+          : signupPhoneController.text,
+      pin: signupPinController.text,
+    ));
+  }
+  
+  // OTP verification method
+  void verifyOtp() {
+    if (isOtpComplete) {
+      add(OtpVerified());
+    }
   }
 }

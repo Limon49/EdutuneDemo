@@ -75,18 +75,14 @@ class ResetTransaction extends TransactionEvent {
   const ResetTransaction();
 }
 
-// GetX TransactionController with BLoC compatibility
 class TransactionController extends GetxController {
   final GetStorage _storage = GetStorage();
   
-  // Internal state
   double _balance = 13999.00;
   var transactions = <Transaction>[].obs;
   
-  // Reactive state
   final transactionState = Rx<TransactionState>(TransactionInitial());
   
-  // Getters for current state
   TransactionState get state => transactionState.value;
   bool get isLoading => transactionState.value.isLoading;
   String? get errorMessage => transactionState.value.errorMessage;
@@ -123,7 +119,6 @@ class TransactionController extends GetxController {
     _storage.write('transactions', transactions.map((t) => t.toJson()).toList());
   }
   
-  // BLoC-like add method for UI compatibility
   void add(TransactionEvent event) {
     if (event is CashOutRequested) {
       _onCashOutRequested(event);

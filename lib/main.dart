@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/transaction_controller.dart';
+import 'controllers/home_controller.dart';
 import 'utils/app_theme.dart';
 import 'routes/app_routes.dart';
 
@@ -24,6 +25,7 @@ void main() async {
 void initializeControllers() {
   Get.put(AuthController());
   Get.put(TransactionController());
+  Get.put(HomeController());
 }
 
 class EPayApp extends StatelessWidget {

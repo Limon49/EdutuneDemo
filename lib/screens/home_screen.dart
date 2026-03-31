@@ -2,48 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/home_controller.dart';
 import '../utils/app_theme.dart';
+import '../utils/app_assets.dart';
 import '../widgets/common_widgets.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedTab = 0;
-  bool _balanceVisible = true;
-
-  final List<Map<String, dynamic>> _quickActions = [
-    {'icon': Icons.arrow_downward_rounded, 'label': 'Cash in', 'route': '/cashout'},
-    {'icon': Icons.arrow_upward_rounded, 'label': 'Cash Out', 'route': '/cashout'},
-    {'icon': Icons.add_circle_outline, 'label': 'Add Money', 'route': '/addmoney'},
-    {'icon': Icons.send_rounded, 'label': 'Send Money', 'route': '/sendmoney'},
-    {'icon': Icons.phone_android, 'label': 'Mobile\nRecharge', 'route': '/mobile-recharge'},
-    {'icon': Icons.train, 'label': 'MRT\nRecharge', 'route': '/mobile-recharge'},
-    {'icon': Icons.payment, 'label': 'Make\nPayment', 'route': '/paybill'},
-    {'icon': Icons.credit_card, 'label': 'Express\nCard Recharge', 'route': '/mobile-recharge'},
-  ];
-
-  final List<Map<String, dynamic>> _billCategories = [
-    {'icon': Icons.lightbulb_outline, 'label': 'Electricity'},
-    {'icon': Icons.local_fire_department_outlined, 'label': 'Gas'},
-    {'icon': Icons.water_drop_outlined, 'label': 'Water'},
-    {'icon': Icons.wifi, 'label': 'Internet'},
-    {'icon': Icons.phone, 'label': 'Telephone'},
-    {'icon': Icons.credit_card, 'label': 'Credit Card'},
-    {'icon': Icons.account_balance, 'label': 'Govt. Fees'},
-    {'icon': Icons.tv, 'label': 'Cable Network'},
-  ];
-
-  final List<Map<String, dynamic>> _remittance = [
-    {'label': 'Payoneer', 'color': Colors.orange},
-    {'label': 'PayPal', 'color': Colors.blue},
-    {'label': 'Wind', 'color': Colors.purple},
-    {'label': 'Wise', 'color': Colors.teal},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: _buildDrawer(context),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(child: _buildHeader()),
+          SliverToBoxAdapter(child: _buildHeader(context)),
           SliverToBoxAdapter(child: _buildBalanceCard()),
           SliverToBoxAdapter(child: _buildQuickActions()),
           SliverToBoxAdapter(child: _buildPayBillSection()),
@@ -63,23 +28,91 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: _buildBottomNav(),
     );
   }
+  
+  // Helper method to render icons (handles both IconData and asset strings)
+  Widget _buildIcon(dynamic iconData, {Color color = AppColors.primary, double size = 26}) {
+    if (iconData is IconData) {
+      return Icon(
+        iconData,
+        color: color,
+        size: size,
+      );
+    } else if (iconData is String) {
+      return Image.asset(
+        iconData,
+        width: size,
+        height: size,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(
+            Icons.error_outline,
+            color: color,
+            size: size,
+          );
+        },
+      );
+    }
+    return Icon(
+      Icons.help_outline,
+      color: color,
+      size: size,
+    );
+  }
+  
+  // Helper method to render icon without background container
+  Widget _buildIconOnly(dynamic iconData, {double size = 26}) {
+    if (iconData is IconData) {
+      return Icon(
+        iconData,
+        size: size,
+      );
+    } else if (iconData is String) {
+      return Image.asset(
+        iconData,
+        width: size,
+        height: size,
+        errorBuilder: (context, error, stackTrace) {
+          return Icon(
+            Icons.error_outline,
+            size: size,
+          );
+        },
+      );
+    }
+    return Icon(
+      Icons.help_outline,
+      size: size,
+    );
+  }
+  
+  Widget _buildSmallPrimaryButton({VoidCallback? onPressed, String text = 'See More'}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: SizedBox(
+        height: 40,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          ),
+          child: Text(
+            text,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildDrawer(BuildContext context) {
-    final menuItems = [
-      {'icon': Icons.home_outlined, 'label': 'Home', 'bold': false, 'route': '/home'},
-      {'icon': Icons.person_outline, 'label': 'Profile', 'bold': false, 'route': '/profile'},
-      {'icon': Icons.receipt_outlined, 'label': 'Statements', 'bold': false, 'route': '/statements'},
-      {'icon': Icons.info_outline, 'label': 'Limits', 'bold': false, 'route': '/limits'},
-      {'icon': Icons.local_offer_outlined, 'label': 'Coupons', 'bold': false, 'route': '/coupons'},
-      {'icon': Icons.emoji_events_outlined, 'label': 'Points', 'bold': false, 'route': '/points'},
-      {'icon': Icons.edit_outlined, 'label': 'Information Update', 'bold': false, 'route': '/info-update'},
-      {'icon': Icons.settings_outlined, 'label': 'Settings', 'bold': false, 'route': '/settings'},
-      {'icon': Icons.person_add_outlined, 'label': 'Nominee Update', 'bold': false, 'route': '/nominee'},
-      {'icon': Icons.support_agent_outlined, 'label': 'Support', 'bold': false, 'route': null},
-      {'icon': Icons.share_outlined, 'label': 'Refer ekPay App', 'bold': false, 'route': null},
-      {'icon': Icons.logout, 'label': 'Logout', 'bold': true, 'route': null},
-    ];
-
     return Drawer(
       backgroundColor: Colors.white,
       child: SafeArea(
@@ -105,15 +138,15 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(height: 1),
             Expanded(
               child: ListView.separated(
-                itemCount: menuItems.length,
+                itemCount: controller.menuItems.length,
                 separatorBuilder: (_, __) =>
                     const Divider(height: 1, color: AppColors.divider),
                 itemBuilder: (context, i) {
-                  final item = menuItems[i];
+                  final item = controller.menuItems[i];
                   final isBold = item['bold'] as bool;
                   return ListTile(
-                    leading: Icon(
-                      item['icon'] as IconData,
+                    leading: _buildIcon(
+                      item['icon'],
                       color: isBold ? AppColors.primary : AppColors.textPrimary,
                       size: 22,
                     ),
@@ -128,17 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : AppColors.textPrimary,
                       ),
                     ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      if (item['label'] == 'Logout') {
-                        Get.find<AuthController>().add(LogoutRequested());
-                        Navigator.pushReplacementNamed(context, '/welcome');
-                      } else if (item['label'] == 'Home') {
-                        // already on home
-                      } else if (item['route'] != null) {
-                        Navigator.pushNamed(context, item['route'] as String);
-                      }
-                    },
+                    onTap: () => controller.handleMenuItemTap(context, item),
                   );
                 },
               ),
@@ -149,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       color: AppColors.primary,
       padding: EdgeInsets.only(
@@ -169,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: AppColors.accent,
                     radius: 18,
                     child: Text(
-                      'R',
+                      controller.userAvatar,
                       style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -179,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'RAHUL',
+                    controller.userName,
                     style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -199,10 +222,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.emoji_events, color: Colors.white, size: 16),
-                const SizedBox(width: 6),
+                Image.asset(
+                  AppAssets.trophyStar,
+                  width: 16,
+                  height: 16,
+                  color: Colors.white,
+                ),                const SizedBox(width: 6),
                 Text(
-                  '1,972 Points',
+                  '${controller.userPoints} Points',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -234,25 +261,22 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                _balanceVisible ? 'Tk: 13,999.00' : 'Tk: ••••••',
+              Obx(() => Text(
+                controller.formattedBalance,
                 style: GoogleFonts.poppins(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
-              ),
+              )),
               const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () =>
-                    setState(() => _balanceVisible = !_balanceVisible),
+              Obx(() => GestureDetector(
+                onTap: controller.toggleBalanceVisibility,
                 child: Icon(
-                  _balanceVisible
-                      ? Icons.remove_red_eye_outlined
-                      : Icons.visibility_off_outlined,
+                  controller.getBalanceVisibilityIcon(),
                   color: AppColors.textSecondary,
                 ),
-              ),
+              )),
             ],
           ),
         ],
@@ -275,30 +299,18 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               crossAxisSpacing: 8,
             ),
-            itemCount: 8,
+            itemCount: controller.quickActions.length,
             itemBuilder: (context, i) {
-              final action = _quickActions[i];
+              final action = controller.quickActions[i];
               return GestureDetector(
-                onTap: () {
-                  if (action['route'] != null) {
-                    Navigator.pushNamed(context, action['route'] as String);
-                  }
-                },
+                onTap: () => controller.handleQuickActionTap(context, action),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        action['icon'] as IconData,
-                        color: AppColors.primary,
-                        size: 26,
-                      ),
+                      width: 30,
+                      height: 30,
+                      child: _buildIconOnly(action['icon'], size: 26),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -317,21 +329,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           Center(
-            child: OutlinedButton(
+            child: _buildSmallPrimaryButton(
               onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.primary),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24)),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              ),
-              child: Text(
-                'See More',
-                style: GoogleFonts.poppins(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              text: 'See More',
             ),
           ),
         ],
@@ -363,30 +363,18 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               crossAxisSpacing: 8,
             ),
-            itemCount: _billCategories.length,
+            itemCount: controller.billCategories.length,
             itemBuilder: (context, i) {
-              final cat = _billCategories[i];
+              final cat = controller.billCategories[i];
               return GestureDetector(
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  '/bill-payment',
-                  arguments: {'category': cat['label']},
-                ),
+                onTap: () => controller.handleBillCategoryTap(context, cat),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        cat['icon'] as IconData,
-                        color: AppColors.primary,
-                        size: 26,
-                      ),
+                      width: 30,
+                      height: 30,
+                      child: _buildIconOnly(cat['icon'], size: 26),
                     ),
                     const SizedBox(height: 6),
                     Text(
@@ -405,21 +393,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           Center(
-            child: OutlinedButton(
+            child: _buildSmallPrimaryButton(
               onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.primary),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24)),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              ),
-              child: Text(
-                'See more',
-                style: GoogleFonts.poppins(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              text: 'See more',
             ),
           ),
         ],
@@ -443,7 +419,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
           Row(
-            children: _remittance.map((r) {
+            children: controller.remittance.map((r) {
               return Expanded(
                 child: Column(
                   children: [
@@ -451,18 +427,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: (r['color'] as Color).withOpacity(0.1),
+                        color: AppColors.surface,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Center(
-                        child: Text(
-                          (r['label'] as String)[0],
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: r['color'] as Color,
-                          ),
-                        ),
+                      child: _buildIcon(
+                        r['icon'],
+                        color: AppColors.primary,
+                        size: 26,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -484,12 +455,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBottomNav() {
-    final tabs = [
-      {'icon': Icons.home_rounded, 'label': 'Home'},
-      {'icon': Icons.qr_code_scanner, 'label': 'QR Scan'},
-      {'icon': Icons.inbox, 'label': 'Inbox'},
-    ];
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -505,13 +470,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SizedBox(
           height: 64,
           child: Row(
-            children: List.generate(tabs.length, (i) {
+            children: List.generate(controller.bottomNavTabs.length, (i) {
               final isMiddle = i == 1;
-              final isSelected = _selectedTab == i;
+              final isSelected = controller.currentTab == i;
               if (isMiddle) {
                 return Expanded(
                   child: GestureDetector(
-                    onTap: () => setState(() => _selectedTab = i),
+                    onTap: () => controller.selectTab(i),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -529,8 +494,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          child: Icon(
-                            tabs[i]['icon'] as IconData,
+                          child: _buildIcon(
+                            controller.bottomNavTabs[i]['icon'],
                             color: Colors.white,
                             size: 24,
                           ),
@@ -542,12 +507,12 @@ class _HomeScreenState extends State<HomeScreen> {
               }
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => setState(() => _selectedTab = i),
+                  onTap: () => controller.selectTab(i),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        tabs[i]['icon'] as IconData,
+                      _buildIcon(
+                        controller.bottomNavTabs[i]['icon'],
                         color: isSelected
                             ? AppColors.primary
                             : AppColors.textSecondary,
@@ -555,7 +520,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        tabs[i]['label'] as String,
+                        controller.bottomNavTabs[i]['label'] as String,
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           color: isSelected
