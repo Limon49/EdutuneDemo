@@ -1,3 +1,4 @@
+import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +16,7 @@ class HomeScreen extends GetView<HomeController> {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: _buildDrawer(context),
+      extendBody: true,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: _buildHeader(context)),
@@ -29,7 +31,6 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
   
-  // Helper method to render icons (handles both IconData and asset strings)
   Widget _buildIcon(dynamic iconData, {Color color = AppColors.primary, double size = 26}) {
     if (iconData is IconData) {
       return Icon(
@@ -455,90 +456,211 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget _buildBottomNav() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: SizedBox(
-          height: 64,
-          child: Row(
-            children: List.generate(controller.bottomNavTabs.length, (i) {
-              final isMiddle = i == 1;
-              final isSelected = controller.currentTab == i;
-              if (isMiddle) {
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () => controller.selectTab(i),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
+    return Obx(() => SizedBox(
+      height: 120,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          CustomPaint(
+            size: const Size(double.infinity, 120),
+            painter: _NotchBarPainter(),
+            child: SizedBox(
+              height: 120,
+              child: Column(
+                children: [
+                  const SizedBox(height: 70),
+                  Row(
+                    children: [
+                      // Home
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => controller.selectTab(0),
+                          behavior: HitTestBehavior.opaque,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildIcon(
+                                controller.bottomNavTabs[0]['icon'],
+                                color: controller.currentTab == 0
+                                    ? AppColors.primary
+                                    : AppColors.textSecondary,
+                                size: 26,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                controller.bottomNavTabs[0]['label'] as String,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: controller.currentTab == 0
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
+                                  fontWeight: controller.currentTab == 0
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
                               ),
                             ],
                           ),
-                          child: _buildIcon(
-                            controller.bottomNavTabs[i]['icon'],
-                            color: Colors.white,
-                            size: 24,
-                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              }
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => controller.selectTab(i),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildIcon(
-                        controller.bottomNavTabs[i]['icon'],
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.textSecondary,
-                        size: 26,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        controller.bottomNavTabs[i]['label'] as String,
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.textSecondary,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+
+                      // Center gap
+                      const SizedBox(width: 100),
+
+                      // Inbox
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => controller.selectTab(2),
+                          behavior: HitTestBehavior.opaque,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildIcon(
+                                controller.bottomNavTabs[2]['icon'],
+                                color: controller.currentTab == 2
+                                    ? AppColors.primary
+                                    : AppColors.textSecondary,
+                                size: 26,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                controller.bottomNavTabs[2]['label'] as String,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: controller.currentTab == 2
+                                      ? AppColors.primary
+                                      : AppColors.textSecondary,
+                                  fontWeight: controller.currentTab == 2
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              );
-            }),
+                ],
+              ),
+            ),
           ),
-        ),
+
+          // Floating QR circle
+          Positioned(
+            top: 18,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: () => controller.selectTab(1),
+                child: Container(
+                  width: 62,
+                  height: 62,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.10),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: _buildIcon(
+                      controller.bottomNavTabs[1]['icon'],
+                      color: AppColors.primary,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // QR label
+          Positioned(
+            bottom: 8,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                controller.bottomNavTabs[1]['label'] as String,
+                style: GoogleFonts.poppins(
+                  fontSize: 11,
+                  color: controller.currentTab == 1
+                      ? AppColors.primary
+                      : AppColors.textSecondary,
+                  fontWeight: controller.currentTab == 1
+                      ? FontWeight.w600
+                      : FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
+    ));
+  }}
+class _NotchBarPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.08)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    final cx = size.width / 2;
+    final w = size.width;
+    final h = size.height;
+
+    const peakHeight = 0.0;
+    const valleyY = 40.0;
+    const notchDepth = 50.0;
+    const peakWidth = 80.0;
+    const notchHalfWidth = 42.0;
+
+    final path = Path();
+
+    // sharp top-left peak
+    path.moveTo(0, peakHeight);
+
+    // curve down from left peak to notch left edge
+    path.cubicTo(
+      peakWidth, peakHeight,
+      cx - notchHalfWidth - 70, valleyY,
+      cx - notchHalfWidth, notchDepth,
     );
+    // notch bottom arc
+    path.arcToPoint(
+      Offset(cx + notchHalfWidth, notchDepth),
+      radius: const Radius.circular(10), // ← smaller radius = flatter/less circular
+      clockwise: false,
+    );
+
+
+    // curve up from notch right edge to sharp top-right peak
+    path.cubicTo(
+      cx + notchHalfWidth + 60, valleyY,
+      w - peakWidth, peakHeight,
+      w, peakHeight,
+    );
+
+    // bottom edges
+    path.lineTo(w, h);
+    path.lineTo(0, h);
+    path.close();
+
+    canvas.drawPath(path, shadowPaint);
+    canvas.drawPath(path, paint);
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
