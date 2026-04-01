@@ -80,12 +80,12 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
                 children: [
                   const TextSpan(
                       text: 'Confirm to ',
-                      style: TextStyle(color: AppColors.primary)),
+                      style: TextStyle(color: AppColors.primary,fontWeight: FontWeight.w500)),
                   TextSpan(
                       text: 'Cash Out',
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary)),
+                          color: AppColors.deepPrimary)),
                 ],
               ),
             ),
@@ -132,9 +132,11 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
             style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w600, fontSize: 14)),
         const SizedBox(height: 8),
-        Text(value,
-            style: GoogleFonts.poppins(
-                fontSize: 15, color: AppColors.textSecondary)),
+        Center(
+          child: Text(value,
+              style: GoogleFonts.poppins(
+                  fontSize: 15, color: AppColors.textSecondary)),
+        ),
       ],
     );
   }
@@ -403,12 +405,13 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
                 children: [
                   const TextSpan(
                       text: 'Confirm to ',
-                      style: TextStyle(color: AppColors.primary)),
+                      style: TextStyle(
+                          color: AppColors.primary,fontWeight: FontWeight.w500)),
                   TextSpan(
                       text: 'Send Money',
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary)),
+                          color: AppColors.deepPrimary)),
                 ],
               ),
             ),

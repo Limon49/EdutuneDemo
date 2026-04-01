@@ -122,7 +122,18 @@ class _CashOutScreenState extends State<CashOutScreen>
                             hintStyle:
                                 GoogleFonts.poppins(color: AppColors.textSecondary),
                             border: InputBorder.none,
-                            suffixIcon: const Icon(Icons.chevron_right),
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                if (_agentController.text.isNotEmpty) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/confirm-cashout',
+                                    arguments: {'agent': _agentController.text.trim()},
+                                  );
+                                }
+                              },
+                              child: const Icon(Icons.chevron_right),
+                            ),
                           ),
                         ),
                       ),
