@@ -8,24 +8,34 @@ import 'controllers/home_controller.dart';
 import 'utils/app_theme.dart';
 import 'routes/app_routes.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await GetStorage.init();
-  initializeControllers(); // Initialize GetX controllers
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  await Future.wait([
+    GetStorage.init(),
+    _configureSystemUI(),
+  ]);
+
+  runApp(const EPayApp());
+}
+
+Future<void> _configureSystemUI() async {
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
     ),
   );
-  runApp(const EPayApp());
 }
 
-void initializeControllers() {
-  Get.put(AuthController());
-  Get.put(TransactionController());
-  Get.put(HomeController());
+void _registerControllers() {
+  Get.lazyPut<AuthController>(() => AuthController(), fenix: true);
+  Get.lazyPut<TransactionController>(() => TransactionController(), fenix: true);
+  Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
 }
 
 class EPayApp extends StatelessWidget {
@@ -33,6 +43,8 @@ class EPayApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _registerControllers();
+
     return GetMaterialApp(
       title: 'ePay',
       debugShowCheckedModeBanner: false,

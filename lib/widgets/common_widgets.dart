@@ -299,14 +299,14 @@ class SuccessDialog extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback onBackToHome;
-  final Widget? illustration;
+  final String? imagePath;
 
   const SuccessDialog({
     super.key,
     required this.title,
     required this.subtitle,
     required this.onBackToHome,
-    this.illustration,
+    this.imagePath,
   });
 
   @override
@@ -318,22 +318,12 @@ class SuccessDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            illustration ??
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.accent, width: 3),
-                  ),
-                  child: const Icon(Icons.check,
-                      color: AppColors.accent, size: 40),
-                ),
+            Image.asset(imagePath ?? AppAssets.group41932, width: 130, height: 130),
             const SizedBox(height: 20),
             Text(
               title,
               style: GoogleFonts.poppins(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.primary,
               ),
@@ -343,7 +333,7 @@ class SuccessDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               text: TextSpan(
                 style: GoogleFonts.poppins(
-                  fontSize: 14,
+                  fontSize: 12,
                   color: AppColors.textSecondary,
                 ),
                 children: [
@@ -370,7 +360,6 @@ class SuccessDialog extends StatelessWidget {
   }
 }
 
-// Keep AppStrings accessible here too
 class AppStrings {
   static const String bangla = 'বাংলা';
   static const String skip = 'Skip';

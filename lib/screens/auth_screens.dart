@@ -32,14 +32,15 @@ class WelcomeScreen extends StatelessWidget {
                   const LanguageBadge(),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 22),
+
               // Illustration
-              Expanded(
+              Flexible(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _buildWelcomeIllustration(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
                     Text(
                       'Create Your Epay\nAccount',
                       textAlign: TextAlign.center,
@@ -228,13 +229,11 @@ class LoginScreen extends GetView<AuthController> {
   }
   
   void _handleStateChanges(BuildContext context) {
-    // Handle authentication success
     if (controller.state is AuthAuthenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AppRoutes.navigateAndClearStack(AppRoutes.home);
       });
     } 
-    // Handle authentication errors
     else if (controller.state is AuthError) {
       final errorState = controller.state as AuthError;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -249,13 +248,12 @@ class LoginScreen extends GetView<AuthController> {
   }
 }
 
-// ─── Sign Up Screen ────────────────────────────────────────────────────────────
+//sign up
 class SignUpScreen extends GetView<AuthController> {
   const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Handle OTP navigation
     _handleStateChanges(context);
     
     return Scaffold(
@@ -327,7 +325,6 @@ class SignUpScreen extends GetView<AuthController> {
   }
   
   void _handleStateChanges(BuildContext context) {
-    // Handle OTP navigation
     if (controller.state is AuthOtpSent) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AppRoutes.navigateTo(AppRoutes.otp, arguments: {'phone': (controller.state as AuthOtpSent).phone});
@@ -352,7 +349,7 @@ class OtpScreen extends GetView<AuthController> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
+        child: Obx(() => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,7 +382,6 @@ class OtpScreen extends GetView<AuthController> {
                 ),
               ),
               const SizedBox(height: 40),
-              // OTP boxes
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(
@@ -433,7 +429,7 @@ class OtpScreen extends GetView<AuthController> {
               const BottomIssueBar(),
             ],
           ),
-        ),
+        )),
       ),
     );
   }

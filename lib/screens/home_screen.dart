@@ -151,7 +151,7 @@ class HomeScreen extends GetView<HomeController> {
                         final isBold = item['bold'] as bool;
                         return ListTile(
                           contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
+                            horizontal: 16,vertical: 0
                           ),
                           leading: _buildIcon(
                             item['icon'],
@@ -287,7 +287,7 @@ class HomeScreen extends GetView<HomeController> {
             'Your Balance',
             style: GoogleFonts.poppins(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: AppColors.black400,
             ),
           ),
           const SizedBox(height: 4),

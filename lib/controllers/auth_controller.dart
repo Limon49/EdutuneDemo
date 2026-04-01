@@ -107,13 +107,14 @@ class AuthController extends GetxController {
   
   final otpControllers = List.generate(4, (_) => TextEditingController());
   final otpFocusNodes = List.generate(4, (_) => FocusNode());
+  final otpValues = List.filled(4, '').obs;
   
   AuthState get state => authState.value;
   bool get isLoading => authState.value.isLoading;
   bool get isAuthenticated => authState.value.isAuthenticated;
   String? get errorMessage => authState.value.errorMessage;
   
-  bool get isOtpComplete => otpControllers.every((c) => c.text.isNotEmpty);
+  bool get isOtpComplete => otpValues.every((value) => value.isNotEmpty);
   
   @override
   void onInit() {
@@ -214,13 +215,18 @@ class AuthController extends GetxController {
   
   // OTP handling
   void onOtpDigitEntered(int index, String value) {
-    if (value.isNotEmpty && index < 3) {
-      otpFocusNodes[index + 1].requestFocus();
+    // Update the reactive OTP values
+    if (value.isNotEmpty) {
+      otpValues[index] = value;
+      if (index < 3) {
+        otpFocusNodes[index + 1].requestFocus();
+      }
+    } else {
+      otpValues[index] = '';
+      if (index > 0) {
+        otpFocusNodes[index - 1].requestFocus();
+      }
     }
-    if (value.isEmpty && index > 0) {
-      otpFocusNodes[index - 1].requestFocus();
-    }
-    update(); // Trigger UI update
   }
   
   // Convenience methods
@@ -254,4 +260,7 @@ class AuthController extends GetxController {
       add(OtpVerified());
     }
   }
+  
+  // Get the complete OTP string
+  String get completeOtp => otpValues.join('');
 }

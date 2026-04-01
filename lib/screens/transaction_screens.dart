@@ -49,7 +49,7 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
               builder: (_) => SuccessDialog(
                 title: 'Cash Out Successful',
                 subtitle: 'Withdraw TK ${(controller.state as CashOutSuccess).amount.toStringAsFixed(0)}',
-                illustration: _buildCashOutIllustration(),
+                imagePath: AppAssets.cashOutSuccess,
                 onBackToHome: () {
                   controller.add(ResetTransaction());
                   Navigator.pushNamedAndRemoveUntil(
@@ -71,6 +71,9 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
+            elevation: 2,
+            scrolledUnderElevation: 4,
+            shadowColor: Colors.black.withOpacity(0.3),
             title: RichText(
               text: TextSpan(
                 style: GoogleFonts.poppins(fontSize: 16),
@@ -193,18 +196,6 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
         ),
         const Divider(height: 32),
       ],
-    );
-  }
-
-  Widget _buildCashOutIllustration() {
-    return Container(
-      width: 90,
-      height: 90,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.accent, width: 3),
-      ),
-      child: const Icon(Icons.check_rounded, color: AppColors.accent, size: 50),
     );
   }
 }
@@ -373,7 +364,6 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
 
     return GetX<TransactionController>(
       builder: (controller) {
-        // Handle success and error states
         if (controller.state is SendMoneySuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             showDialog(
@@ -382,7 +372,7 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
               builder: (_) => SuccessDialog(
                 title: 'Send Money Successful',
                 subtitle: 'Send TK ${(controller.state as SendMoneySuccess).amount.toStringAsFixed(0)}',
-                illustration: _buildSendIllustration(),
+                imagePath: AppAssets.group41932,
                 onBackToHome: () {
                   controller.add(ResetTransaction());
                   Navigator.pushNamedAndRemoveUntil(
@@ -404,6 +394,9 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
+            elevation: 2,
+            scrolledUnderElevation: 4,
+            shadowColor: Colors.black.withOpacity(0.3),
             title: RichText(
               text: TextSpan(
                 style: GoogleFonts.poppins(fontSize: 16),
@@ -434,10 +427,12 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
                 Text('Contact Number',
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w600, fontSize: 14)),
-                const SizedBox(height: 8),
-                Text(contact,
-                    style: GoogleFonts.poppins(
-                        fontSize: 15, color: AppColors.textSecondary)),
+                const SizedBox(height: 14),
+                Center(
+                  child: Text(contact,
+                      style: GoogleFonts.poppins(
+                          fontSize: 15, color: AppColors.grey)),
+                ),
                 const Divider(height: 32),
                 Text('Amount',
                     style: GoogleFonts.poppins(
@@ -514,71 +509,5 @@ class _ConfirmSendMoneyScreenState extends State<ConfirmSendMoneyScreen> {
     );
   }
 
-  Widget _buildSendIllustration() {
-    return SizedBox(
-      height: 100,
-      child: CustomPaint(painter: _SendMoneyIllustrationPainter()),
-    );
-  }
 }
 
-class _SendMoneyIllustrationPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final coinPaint = Paint()
-      ..color = AppColors.accent
-      ..style = PaintingStyle.fill;
-
-    final phonePaint = Paint()
-      ..color = AppColors.primary
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-
-    // Left phone
-    _drawPhone(canvas, phonePaint, 20, 20, 40, 70);
-    // Arrow up on left phone
-    _drawArrow(canvas, Paint()..color = Colors.green..strokeWidth = 3, 40, 50);
-
-    // Right phone
-    _drawPhone(canvas, phonePaint, size.width - 60, 20, 40, 70);
-    // Check on right phone
-    final checkPaint = Paint()
-      ..color = Colors.green
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
-    final path = Path();
-    path.moveTo(size.width - 52, 55);
-    path.lineTo(size.width - 46, 62);
-    path.lineTo(size.width - 32, 45);
-    canvas.drawPath(path, checkPaint);
-
-    // Coins arc
-    for (int i = 0; i < 3; i++) {
-      final x = size.width * 0.3 + i * 30.0;
-      final y = 15.0 - (i == 1 ? 10 : 0);
-      canvas.drawCircle(Offset(x, y), 12, coinPaint);
-      final dollarPaint = Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5;
-      canvas.drawLine(Offset(x, y - 6), Offset(x, y + 6), dollarPaint);
-    }
-  }
-
-  void _drawPhone(
-      Canvas canvas, Paint paint, double x, double y, double w, double h) {
-    final rect = RRect.fromRectAndRadius(
-        Rect.fromLTWH(x, y, w, h), const Radius.circular(8));
-    canvas.drawRRect(rect, paint);
-  }
-
-  void _drawArrow(Canvas canvas, Paint paint, double cx, double cy) {
-    paint.style = PaintingStyle.stroke;
-    canvas.drawLine(Offset(cx, cy + 10), Offset(cx, cy - 10), paint);
-    canvas.drawLine(Offset(cx - 8, cy), Offset(cx, cy - 10), paint);
-    canvas.drawLine(Offset(cx + 8, cy), Offset(cx, cy - 10), paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
