@@ -152,7 +152,7 @@ class HomeScreen extends GetView<HomeController> {
                         return ListTile(
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                          ), // ✅ match header padding
+                          ),
                           leading: _buildIcon(
                             item['icon'],
                             color: isBold

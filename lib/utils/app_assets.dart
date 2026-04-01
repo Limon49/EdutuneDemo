@@ -34,7 +34,7 @@ class AppAssets {
   static const String icon1 = 'assets/icons/icon (1).png';
   static const String icon2 = 'assets/icons/icon (2).png';
   static const String icon3 = 'assets/icons/icon (3).png'; //use in contact
-  static const String iconFriends1 = 'assets/icons/icon-friends (1).png';
+  static const String iconFriends1 = 'assets/icons/icon-friends (1).png';//send money
   static const String iconFriends = 'assets/icons/icon-friends.png';
   static const String iconWifi = 'assets/icons/icon-wifi.png';
   static const String image5 = 'assets/icons/image 5.png';

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../controllers/transaction_controller.dart';
 import '../models/models.dart';
 import '../utils/app_theme.dart';
+import '../utils/app_assets.dart';
 import '../widgets/common_widgets.dart';
 
 class CashOutScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _CashOutScreenState extends State<CashOutScreen>
         children: [
           Expanded(
             child: _TabCard(
-              icon: Icons.people,
+              assetPath: AppAssets.iconFriends,
               label: 'Agent',
               isSelected: _selectedTab == 0,
               onTap: () {
@@ -79,7 +80,7 @@ class _CashOutScreenState extends State<CashOutScreen>
           const SizedBox(width: 12),
           Expanded(
             child: _TabCard(
-              icon: Icons.atm,
+              assetPath: AppAssets.group41865,
               label: 'ATM',
               isSelected: _selectedTab == 1,
               onTap: () {
@@ -96,64 +97,66 @@ class _CashOutScreenState extends State<CashOutScreen>
   Widget _buildAgentTab() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Input field
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _agentController,
-                  keyboardType: TextInputType.phone,
-                  style: GoogleFonts.poppins(color: AppColors.textPrimary),
-                  decoration: InputDecoration(
-                    hintText: 'Input Agent Number',
-                    hintStyle:
-                        GoogleFonts.poppins(color: AppColors.textSecondary),
-                    border: InputBorder.none,
-                    suffixIcon: const Icon(Icons.chevron_right),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Input field
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _agentController,
+                    keyboardType: TextInputType.phone,
+                    style: GoogleFonts.poppins(color: AppColors.textPrimary),
+                    decoration: InputDecoration(
+                      hintText: 'Input Agent Number',
+                      hintStyle:
+                          GoogleFonts.poppins(color: AppColors.textSecondary),
+                      border: InputBorder.none,
+                      suffixIcon: const Icon(Icons.chevron_right),
+                    ),
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(10),
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.contacts, color: Colors.white, size: 20),
                 ),
-                child: const Icon(Icons.contacts, color: Colors.white, size: 20),
+              ],
+            ),
+            const Divider(),
+            const SizedBox(height: 12),
+            // QR code button
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
+              label: Text(
+                'Tap To Scan QR Code',
+                style: GoogleFonts.poppins(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ],
-          ),
-          const Divider(),
-          const SizedBox(height: 12),
-          // QR code button
-          OutlinedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
-            label: Text(
-              'Tap To Scan QR Code',
-              style: GoogleFonts.poppins(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primary),
+                minimumSize: const Size(double.infinity, 48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
               ),
             ),
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.primary),
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          _buildContactSection(
-              'Recent Contacts', AppData.recentContacts, isAgent: true),
-          const SizedBox(height: 16),
-          _buildContactSection(
-              'All Contacts', AppData.allContacts, isAgent: true),
-        ],
+            const SizedBox(height: 24),
+            _buildContactSection(
+                'Recent Contacts', AppData.recentContacts, isAgent: true),
+            const SizedBox(height: 16),
+            _buildContactSection(
+                'All Contacts', AppData.allContacts, isAgent: true),
+          ],
+        ),
       ),
     );
   }
@@ -250,13 +253,15 @@ class _CashOutScreenState extends State<CashOutScreen>
 }
 
 class _TabCard extends StatelessWidget {
-  final IconData icon;
+  final String? assetPath;
+  final IconData? icon;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _TabCard({
-    required this.icon,
+    this.assetPath,
+    this.icon,
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -270,18 +275,28 @@ class _TabCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.divider,
           ),
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: isSelected ? Colors.white : AppColors.primary,
-              size: 36,
-            ),
+            if (assetPath != null)
+              Image.asset(
+                assetPath!,
+                width: 36,
+                height: 36,
+                color: isSelected ? Colors.white : AppColors.primary,
+              )
+            else if (icon != null)
+              Icon(
+                icon!,
+                color: isSelected ? Colors.white : AppColors.primary,
+                size: 36,
+              )
+            else
+              const SizedBox.shrink(),
             const SizedBox(height: 8),
             Text(
               label,
