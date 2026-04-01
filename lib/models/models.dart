@@ -46,6 +46,7 @@ class UserModel {
   final double balance;
   final int points;
   final String avatarText;
+  final String? avatarImage;
 
   const UserModel({
     required this.name,
@@ -53,6 +54,7 @@ class UserModel {
     required this.balance,
     required this.points,
     required this.avatarText,
+    this.avatarImage,
   });
 }
 

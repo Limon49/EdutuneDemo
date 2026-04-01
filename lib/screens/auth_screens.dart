@@ -405,7 +405,7 @@ class OtpScreen extends GetView<AuthController> {
                     Text(
                       "Didn't get the code? ",
                       style: GoogleFonts.poppins(
-                          color: AppColors.textSecondary),
+                          color: AppColors.textBlack),
                     ),
                     GestureDetector(
                       onTap: () {},
@@ -462,8 +462,8 @@ class _OtpBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 72,
-      height: 72,
+      width: 70,
+      height: 56,
       decoration: BoxDecoration(
         color: AppColors.langBadge,
         borderRadius: BorderRadius.circular(16),
@@ -475,7 +475,7 @@ class _OtpBox extends StatelessWidget {
         keyboardType: TextInputType.number,
         maxLength: 1,
         style: GoogleFonts.poppins(
-          fontSize: 24,
+          fontSize: 26,
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),

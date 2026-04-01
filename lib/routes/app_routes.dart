@@ -45,7 +45,7 @@ class AppRoutes {
     GetPage(name: login, page: () => const LoginScreen()),
     GetPage(name: signup, page: () => const SignUpScreen()),
     GetPage(name: otp, page: () => const OtpScreen()),
-    GetPage(name: home, page: () => const HomeScreen()),
+    GetPage(name: home, page: () =>  HomeScreen()),
     GetPage(name: cashout, page: () => const CashOutScreen()),
     GetPage(name: addmoney, page: () => const AddMoneyScreen()),
     GetPage(name: sendmoney, page: () => const SendMoneyScreen()),

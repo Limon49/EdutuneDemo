@@ -87,7 +87,7 @@ class HomeController extends GetxController {
   String get formattedBalance => isBalanceVisible 
       ? 'Tk: ${balance.toStringAsFixed(2)}' 
       : 'Tk: ••••••';
-  String get userAvatar => user?.avatarText ?? 'R';
+  String get userAvatar => user?.avatarImage ?? AppAssets.user;
   String get userName => user?.name ?? 'RAHUL';
   String get userPoints => user?.points.toString() ?? '1,972';
 
