@@ -73,10 +73,12 @@ class ContactModel {
 class BankModel {
   final String name;
   final String branch;
+  final String imagePath;
 
   const BankModel({
     required this.name,
     required this.branch,
+    required this.imagePath,
   });
 }
 
@@ -102,8 +104,22 @@ class AppData {
   ];
 
   static const List<BankModel> banks = [
-    BankModel(name: 'Basic Bank', branch: 'Mirpur 11'),
-    BankModel(name: 'Brak Bank', branch: 'Banani'),
-    BankModel(name: 'Islamic Bank', branch: 'Gulshan 1'),
+    BankModel(
+      name: 'Basic Bank',
+      branch: 'Mirpur 11',
+      imagePath: 'assets/icons/Group 472.png',
+    ),
+    BankModel(
+      name: 'Brak Bank',
+      branch: 'Banani',
+      imagePath: 'assets/icons/Group 478.png',
+
+    ),
+    BankModel(
+      name: 'Islamic Bank',
+      branch: 'Gulshan 1',
+      imagePath: 'assets/icons/Group 477.png',
+
+    ),
   ];
 }

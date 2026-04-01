@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../utils/app_assets.dart';
 import '../utils/app_theme.dart';
 
 class LanguageBadge extends StatelessWidget {
@@ -233,7 +234,11 @@ class ContactListTile extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: AppColors.surface,
         radius: 26,
-        child: Icon(Icons.person, color: AppColors.textSecondary, size: 28),
+        child: Image.asset(AppAssets.user1,
+        width: 30,
+        height: 30,
+          color: AppColors.textSecondary,
+      ),
       ),
       title: Text(
         name,

@@ -16,6 +16,9 @@ class AppAssets {
   static const String group41866 = 'assets/icons/Group 41866.png';// todo use in add money
   static const String group41867 = 'assets/icons/Group 41867.png'; // todo use in add money
   static const String group41869 = 'assets/icons/Group 41869.png'; // todo use in add money
+  static const String group472 = 'assets/icons/Group 472.png';
+  static const String group477 = 'assets/icons/Group 477.png';
+  static const String group478 = 'assets/icons/Group 478.png';
   static const String union1 = 'assets/icons/Union (1).png';
   static const String union = 'assets/icons/Union.png';
   static const String bank1 = 'assets/icons/bank 1.png';

@@ -43,6 +43,9 @@ class _CashOutScreenState extends State<CashOutScreen>
       appBar: AppBar(
         title: const Text('Cash Out'),
         centerTitle: true,
+        elevation: 2,
+        scrolledUnderElevation: 4,
+        shadowColor: Colors.black.withOpacity(0.3),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -56,6 +59,8 @@ class _CashOutScreenState extends State<CashOutScreen>
                 ? _buildAgentTab()
                 : _buildAtmTab(),
           ),
+          SizedBox(height: 16),
+          const BottomIssueBar(),
         ],
       ),
     );
@@ -101,54 +106,61 @@ class _CashOutScreenState extends State<CashOutScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Input field
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _agentController,
-                    keyboardType: TextInputType.phone,
-                    style: GoogleFonts.poppins(color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      hintText: 'Input Agent Number',
-                      hintStyle:
-                          GoogleFonts.poppins(color: AppColors.textSecondary),
-                      border: InputBorder.none,
-                      suffixIcon: const Icon(Icons.chevron_right),
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _agentController,
+                          keyboardType: TextInputType.phone,
+                          style: GoogleFonts.poppins(color: AppColors.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: 'Input Agent Number',
+                            hintStyle:
+                                GoogleFonts.poppins(color: AppColors.textSecondary),
+                            border: InputBorder.none,
+                            suffixIcon: const Icon(Icons.chevron_right),
+                          ),
+                        ),
+                      ),
+                      Image.asset(
+                        AppAssets.icon3,
+                        width: 42,
+                        height: 42,
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 12),
+                  // QR code button
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18),
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
+                      label: Text(
+                        'Tap To Scan QR Code',
+                        style: GoogleFonts.poppins(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.primary),
+                        minimumSize: const Size(double.infinity, 38),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.contacts, color: Colors.white, size: 20),
-                ),
-              ],
-            ),
-            const Divider(),
-            const SizedBox(height: 12),
-            // QR code button
-            OutlinedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.qr_code_scanner, color: AppColors.primary),
-              label: Text(
-                'Tap To Scan QR Code',
-                style: GoogleFonts.poppins(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.primary),
-                minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
+                ],
               ),
             ),
+
             const SizedBox(height: 24),
             _buildContactSection(
                 'Recent Contacts', AppData.recentContacts, isAgent: true),
@@ -168,22 +180,24 @@ class _CashOutScreenState extends State<CashOutScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
-          RichText(
-            text: TextSpan(
-              style: GoogleFonts.poppins(fontSize: 15),
-              children: [
-                TextSpan(
-                  text: 'Available Balance: ',
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w600,
+          Center(
+            child: RichText(
+              text: TextSpan(
+                style: GoogleFonts.poppins(fontSize: 15),
+                children: [
+                  TextSpan(
+                    text: 'Available Balance: ',
+                    style: const TextStyle(
+                      color: AppColors.deepPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: '13999 TK',
-                  style: const TextStyle(color: AppColors.textPrimary),
-                ),
-              ],
+                  TextSpan(
+                    text: '13999 TK',
+                    style: const TextStyle(color: AppColors.textPrimary),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -191,14 +205,14 @@ class _CashOutScreenState extends State<CashOutScreen>
           TextField(
             decoration: InputDecoration(
               hintText: 'Search for Partner Bank',
-              hintStyle: GoogleFonts.poppins(color: AppColors.textSecondary),
+              hintStyle: GoogleFonts.poppins(color: AppColors.grey),
               filled: true,
               fillColor: AppColors.inputBg,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
               ),
-              prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+              // prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             ),
@@ -361,11 +375,18 @@ class _BankCard extends StatelessWidget {
             width: 80,
             height: 65,
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.account_balance,
-                color: AppColors.primary, size: 36),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                bank.imagePath,
+                width: 60,
+                height: 45,
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
         ],
       ),

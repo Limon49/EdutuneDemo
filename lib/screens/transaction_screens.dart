@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/transaction_controller.dart';
+import '../utils/app_assets.dart';
 import '../utils/app_theme.dart';
 import '../widgets/common_widgets.dart';
 
@@ -40,7 +41,6 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
 
     return GetX<TransactionController>(
       builder: (controller) {
-        // Handle success and error states
         if (controller.state is CashOutSuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             showDialog(
@@ -209,7 +209,7 @@ class _ConfirmCashOutScreenState extends State<ConfirmCashOutScreen> {
   }
 }
 
-// ─── Send Money Screen ────────────────────────────────────────────────────────
+//todo send money screen
 class SendMoneyScreen extends StatefulWidget {
   const SendMoneyScreen({super.key});
 
@@ -232,6 +232,9 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Send Money'),
+        elevation: 2,
+        scrolledUnderElevation: 4,
+        shadowColor: Colors.black.withOpacity(0.3),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -274,16 +277,11 @@ class _SendMoneyScreenState extends State<SendMoneyScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.contacts,
-                      color: Colors.white, size: 20),
-                ),
-              ],
+                Image.asset(
+                  AppAssets.icon3,
+                  width: 42,
+                  height: 42,
+                ),              ],
             ),
             const Divider(),
             const SizedBox(height: 16),

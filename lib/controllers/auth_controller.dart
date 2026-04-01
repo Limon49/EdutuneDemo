@@ -184,7 +184,6 @@ class AuthController extends GetxController {
     try {
       await Future.delayed(const Duration(seconds: 1));
       authState.value = AuthOtpSent(phone: event.phone);
-      // Navigate to OTP screen after successful signup
       Get.toNamed('/otp', arguments: {'phone': event.phone});
     } catch (e) {
       authState.value = AuthError(message: 'Sign up failed: ${e.toString()}');

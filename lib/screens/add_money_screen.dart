@@ -1,3 +1,4 @@
+import 'package:epay_edutune/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../utils/app_theme.dart';
@@ -13,7 +14,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedTab = 0;
-  int _selectedSource = 0; // 0 = Bank Account, 1 = Internet Banking
+  int _selectedSource = 0;
 
   @override
   void initState() {
@@ -37,6 +38,9 @@ class _AddMoneyScreenState extends State<AddMoneyScreen>
       appBar: AppBar(
         title: const Text('Add Money'),
         centerTitle: true,
+        elevation: 2,
+        scrolledUnderElevation: 4,
+        shadowColor: Colors.black.withOpacity(0.3),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -50,7 +54,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen>
               children: [
                 Expanded(
                   child: _TabCardAdd(
-                    icon: Icons.account_balance,
+                    assetPath: AppAssets.mdiBankTransferOut,
                     label: 'Bank to Ekpay',
                     isSelected: _selectedTab == 0,
                     onTap: () {
@@ -62,7 +66,7 @@ class _AddMoneyScreenState extends State<AddMoneyScreen>
                 const SizedBox(width: 12),
                 Expanded(
                   child: _TabCardAdd(
-                    icon: Icons.credit_card,
+                    assetPath: AppAssets.group41869,
                     label: 'Card to Ekpay',
                     isSelected: _selectedTab == 1,
                     onTap: () {
@@ -78,19 +82,19 @@ class _AddMoneyScreenState extends State<AddMoneyScreen>
               'Select Your Add Money Source',
               style: GoogleFonts.poppins(
                 fontSize: 14,
-                color: AppColors.textSecondary,
+                color: AppColors.primary,
               ),
             ),
             const Divider(height: 24),
             _SourceOption(
-              icon: Icons.account_balance,
+              assetPath: AppAssets.group41866,
               label: 'Bank Account',
               isSelected: _selectedSource == 0,
               onTap: () => setState(() => _selectedSource = 0),
             ),
             const SizedBox(height: 12),
             _SourceOption(
-              icon: Icons.language,
+              assetPath: AppAssets.group41867,
               label: 'Internet Banking',
               isSelected: _selectedSource == 1,
               onTap: () => setState(() => _selectedSource = 1),
@@ -103,13 +107,15 @@ class _AddMoneyScreenState extends State<AddMoneyScreen>
 }
 
 class _TabCardAdd extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? assetPath;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _TabCardAdd({
-    required this.icon,
+    this.icon,
+    this.assetPath,
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -120,18 +126,26 @@ class _TabCardAdd extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 10),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.divider,
           ),
         ),
         child: Column(
           children: [
-            Icon(icon,
-                color: isSelected ? Colors.white : AppColors.primary, size: 32),
+            if (assetPath != null)
+              Image.asset(
+                assetPath!,
+                width: 32,
+                height: 32,
+                color: isSelected ? Colors.white : AppColors.primary,
+              )
+            else if (icon != null)
+              Icon(icon!,
+                  color: isSelected ? Colors.white : AppColors.primary, size: 32),
             const SizedBox(height: 8),
             Text(
               label,
@@ -150,13 +164,15 @@ class _TabCardAdd extends StatelessWidget {
 }
 
 class _SourceOption extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? assetPath;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _SourceOption({
-    required this.icon,
+    this.icon,
+    this.assetPath,
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -178,7 +194,15 @@ class _SourceOption extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.primary, size: 24),
+            if (assetPath != null)
+              Image.asset(
+                assetPath!,
+                width: 24,
+                height: 24,
+                color: AppColors.primary,
+              )
+            else if (icon != null)
+              Icon(icon!, color: AppColors.primary, size: 24),
             const SizedBox(width: 12),
             Text(
               label,
